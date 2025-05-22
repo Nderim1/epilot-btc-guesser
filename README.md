@@ -5,3 +5,4 @@
 - installed aws-sam-cli (serverless application model cli tool)
 - created a new SAM project
 - updated the template.yaml file to create a new API Gateway endpoint, define a new DynamoDB table, and define a new Lambda function
+- created the actual lambda function to get the BTC price

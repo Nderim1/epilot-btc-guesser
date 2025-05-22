@@ -28,22 +28,19 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: BtcGuesserGetPriceFunction
-      CodeUri: src/getPrice/ # We will create this path
-      Handler: app.lambdaHandler # module_name.export_name
-      Policies:
-        - HttpCrudPolicy: # Allows making outbound HTTP requests (for Coinbase API)
-            Endpoints: ['api.coinbase.com'] # Be specific if possible
+      CodeUri: src/getPrice/ 
+      Handler: app.lambdaHandler 
       Events:
         GetPriceApi:
-          Type: Api # Creates an API Gateway endpoint
+          Type: Api 
           Properties:
             Path: /price
             Method: get
-    Metadata: # For building with esbuild
+    Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: false
-        Target: "es2020" # Match your runtime
+        Target: "es2020" 
         Sourcemap: true
         EntryPoints: 
           - app.ts
