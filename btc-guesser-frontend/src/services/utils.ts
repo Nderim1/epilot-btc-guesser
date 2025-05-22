@@ -1,11 +1,24 @@
 import notificationService from './notificationService'; // Import the service
 
+const parseError = async (response: Response) => {
+  let errorData;
+  try {
+    errorData = await response.json();
+  } catch (error) {
+    errorData = { message: response.statusText || (error as Error).message };
+  }
+  const errorMessage = errorData?.message || `HTTP error! status: ${response.status}`;
+
+  notificationService.emit('showAppNotification', { message: errorMessage, type: 'error' });
+
+  throw new Error(errorMessage);
+}
 
 export const queryFetcher = (query: string) => {
   return fetch(query)
-    .then((res) => {
+    .then(async (res) => {
       if (!res.ok) {
-        throw new Error(`API Error: ${res.status} ${res.statusText}`);
+        await parseError(res);
       }
       return res.json();
     })
@@ -27,14 +40,13 @@ export const postFetcher = (query: string, data: unknown) => {
     },
     body: JSON.stringify(data),
   })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    .then(async (response) => {
+      if (!response.ok) {
+        await parseError(response);
       }
-      return res.json();
+      return response.json();
     })
     .catch((err) => {
-      console.error('API Fetch Error:', err);
       notificationService.emit('showAppNotification', {
         message: err.message || 'An API error occurred. Please try again.',
         type: 'error',

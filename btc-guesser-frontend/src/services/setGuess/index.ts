@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
 import { postFetcher } from "../utils";
 import notificationService from "../notificationService";
 
@@ -13,6 +13,8 @@ interface SetGuessResponse {
 }
 
 export const useSetGuess = () => {
+  const queryClient = useQueryClient();
+
   const mutation: UseMutationResult<SetGuessResponse, Error, SetGuessPayload> = useMutation<
     SetGuessResponse,
     Error,
@@ -29,11 +31,17 @@ export const useSetGuess = () => {
         type: 'success',
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Guess failed:', error);
       notificationService.emit('showAppNotification', {
-        message: 'Guess failed!',
+        message: error.message || 'Guess failed!',
         type: 'error',
       });
+    },
+    onSettled: (_data, _error, variables) => {
+      if (variables?.playerId) {
+        queryClient.invalidateQueries({ queryKey: ['player-status', variables.playerId] });
+      }
     },
   });
 
