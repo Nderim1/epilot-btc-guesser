@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { queryFetcher } from "../fetch";
+import { queryFetcher } from "../utils";
 import { ChartData } from 'chart.js';
 
 type CoinbaseCandle = [

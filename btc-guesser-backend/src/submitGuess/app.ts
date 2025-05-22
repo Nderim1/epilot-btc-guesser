@@ -76,7 +76,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
 
     if (playerItem && playerItem.ActiveGuess) {
       return {
-        statusCode: 409, // Conflict - guess already active
+        statusCode: 409,
         headers: { "Access-Control-Allow-Origin": "*" },
         body: JSON.stringify({ message: 'An active guess already exists for this player. Please wait for it to resolve.' }),
       };

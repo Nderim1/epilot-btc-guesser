@@ -4,6 +4,7 @@ import TrendChart from './components/TrendChart';
 import Notification, { NotificationType } from './components/Notification';
 import { ChartOptions } from 'chart.js';
 import { useGetBTCHistoricalPrice } from './services/getBTCHistoricalPrice';
+import { useSetGuess } from './services/setGuess';
 
 const initialChartOptions: ChartOptions<'line'> = {
   responsive: true,
@@ -27,15 +28,26 @@ const App = (): JSX.Element => {
   const [playerName, setPlayerName] = useState('');
   const [notification, setNotification] = useState<{ message: string; type: NotificationType } | null>(null);
   const { data: btcHistoricalPriceData, isLoading: btcHistoricalPriceLoading, error: btcHistoricalPriceError } = useGetBTCHistoricalPrice();
+  const guessMutation = useSetGuess();
   const [isCurrentPriceLoading, setIsCurrentPriceLoading] = useState(true);
   const [currentBtcPrice, setCurrentBtcPrice] = useState<string | null>(null);
+  const [guessAttempted, setGuessAttempted] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentBtcPrice('42,069.69');
       setIsCurrentPriceLoading(false);
     }, 2000);
-    return () => clearTimeout(timer);
+
+    const handleShowAppNotification = (event: CustomEvent<{ message: string; type: NotificationType }>) => {
+      setNotification({ message: event.detail.message, type: event.detail.type });
+    };
+    window.addEventListener('showAppNotification', handleShowAppNotification as EventListener);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('showAppNotification', handleShowAppNotification as EventListener);
+    };
   }, []);
 
   const showNotification = (message: string, type: NotificationType) => {
@@ -51,12 +63,14 @@ const App = (): JSX.Element => {
     }
   }, [notification]);
 
-  const handleSavePlayerName = () => {
+  const handleGuess = async (guessDirection: string) => {
     if (playerName.trim() === '') {
       showNotification('Player name cannot be empty!', 'error');
       return;
     }
-    showNotification(`Player name '${playerName}' saved!`, 'success');
+    setGuessAttempted(guessDirection);
+    await guessMutation.mutateAsync({ playerId: playerName, guess: guessDirection });
+    setGuessAttempted(null);
   };
 
   return (
@@ -70,7 +84,7 @@ const App = (): JSX.Element => {
       )}
 
       <h1 className='text-5xl font-bold text-center'>Bitcoin Price Guesser</h1>
-      <div className='flex gap-2 items-center'>
+      <div className='flex gap-2 items-center h-6'>
         <span>Current BTC price: </span>
         {isCurrentPriceLoading ? (
           <ArrowPathIcon className='animate-spin h-5 w-5 text-gray-500' />
@@ -93,23 +107,25 @@ const App = (): JSX.Element => {
           className='border border-gray-300 rounded px-2 py-1'
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
+          placeholder="Enter your name"
+          disabled={guessMutation.isPending}
         />
-        <button
-          className='flex items-center px-4 py-1 text-white rounded bg-blue-500 hover:bg-blue-600'
-          onClick={handleSavePlayerName}
-        >
-          Save
-        </button>
       </div>
       <div className='flex gap-4 items-center'>
         <span>Guess the next price movement:</span>
-        <button className='flex items-center px-4 py-1 bg-green-400 text-white rounded hover:bg-green-600'>
-          <ArrowUpIcon className='h-5 w-5 mr-2' />
-          UP
+        <button
+          className='flex items-center justify-center px-4 py-1 w-24 bg-green-400 text-white rounded hover:bg-green-600 disabled:opacity-50'
+          onClick={() => handleGuess('up')}
+          disabled={guessMutation.isPending}
+        >
+          {guessMutation.isPending && guessAttempted === 'up' ? <ArrowPathIcon className='animate-spin h-5 w-5' /> : <><ArrowUpIcon className='h-5 w-5 mr-2' /> UP</>}
         </button>
-        <button className='flex items-center px-4 py-1 bg-red-400 text-white rounded hover:bg-red-600'>
-          <ArrowDownIcon className='h-5 w-5 mr-2' />
-          DOWN
+        <button
+          className='flex items-center justify-center px-4 py-1 w-24 bg-red-400 text-white rounded hover:bg-red-600 disabled:opacity-50'
+          onClick={() => handleGuess('down')}
+          disabled={guessMutation.isPending}
+        >
+          {guessMutation.isPending && guessAttempted === 'down' ? <ArrowPathIcon className='animate-spin h-5 w-5' /> : <><ArrowDownIcon className='h-5 w-5 mr-2' /> DOWN</>}
         </button>
       </div>
       <div className='flex gap-2 items-center'>

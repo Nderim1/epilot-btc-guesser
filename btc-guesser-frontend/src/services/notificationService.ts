@@ -1,27 +1,27 @@
 import { NotificationType } from '../components/Notification';
 
 type NotificationPayload = { message: string; type: NotificationType };
-type Listener = (payload: NotificationPayload) => void;
-
-const listeners: { [eventName: string]: Listener[] } = {};
 
 const notificationService = {
-  subscribe: (eventName: string, callback: Listener): (() => void) => {
-    if (!listeners[eventName]) {
-      listeners[eventName] = [];
-    }
-    listeners[eventName].push(callback);
+  subscribe: (eventName: string, callback: (payload: NotificationPayload) => void): (() => void) => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<NotificationPayload>;
+      callback(customEvent.detail);
+    };
 
-    // Return an unsubscribe function
+    window.addEventListener(eventName, handler);
+
     return () => {
-      listeners[eventName] = listeners[eventName].filter(cb => cb !== callback);
+      window.removeEventListener(eventName, handler);
     };
   },
 
   emit: (eventName: string, payload: NotificationPayload): void => {
-    if (listeners[eventName]) {
-      listeners[eventName].forEach(callback => callback(payload));
-    }
+    const event = new CustomEvent<NotificationPayload>(eventName, {
+      detail: payload,
+    });
+
+    window.dispatchEvent(event);
   },
 };
 
