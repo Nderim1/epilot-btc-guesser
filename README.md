@@ -8,7 +8,8 @@
 - created the actual lambda function to get the BTC price
 - build the application with SAM build
 - deployed the stack for the first time with SAM deploy --guided
-  - curling https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/price  returns the current price of BTC
+  - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/price  returns the current price of BTC
 - created lambda function to submit a guess
+- updated template.yaml to add a new API Gateway endpoint for the submit guess function and also return that as an output after successful deploy
 - build and deployed the stack
-  - 
+  - curling POST with player id and guess https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/guess works correctly
