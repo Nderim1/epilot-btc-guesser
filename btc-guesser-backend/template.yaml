@@ -45,10 +45,43 @@ Resources:
         EntryPoints: 
           - app.ts
 
+  # Lambda Function to Submit Guess
+  SubmitGuessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: BtcGuesserSubmitGuessFunction
+      CodeUri: src/submitGuess/
+      Handler: app.lambdaHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlayerTable
+      Events:
+        SubmitGuessApi:
+          Type: Api
+          Properties:
+            Path: /guess
+            Method: post
+      Environment:
+        Variables:
+          PLAYER_TABLE_NAME: !Ref PlayerTable
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+          - app.ts
 Outputs:
   GetPriceApiEndpoint:
     Description: "API Gateway endpoint URL for GetPrice function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/price" # Adjust /Prod if you use stages
+  SubmitGuessApiEndpoint:
+    Description: "API Gateway endpoint URL for SubmitGuess function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/guess"
+  ApiGatewayBaseUrl:
+    Description: "Base URL for API Gateway"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
   PlayerTableName:
     Description: "Name of the Player DynamoDB Table"
     Value: !Ref PlayerTable

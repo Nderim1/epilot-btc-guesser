@@ -6,3 +6,9 @@
 - created a new SAM project
 - updated the template.yaml file to create a new API Gateway endpoint, define a new DynamoDB table, and define a new Lambda function
 - created the actual lambda function to get the BTC price
+- build the application with SAM build
+- deployed the stack for the first time with SAM deploy --guided
+  - curling https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/price  returns the current price of BTC
+- created lambda function to submit a guess
+- build and deployed the stack
+  - 
