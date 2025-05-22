@@ -49,6 +49,8 @@ const App = (): JSX.Element => {
   );
 
   useEffect(() => {
+    // handles debouncing player name input so that the request to get player status is not fired
+    // on every keystroke
     updateDebouncedPlayerName(playerName);
 
     return () => {
