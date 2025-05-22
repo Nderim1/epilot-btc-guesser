@@ -1,15 +1,25 @@
 ## Steps I took
-- created folder structure and git repo
-- created a new IAM user and added it to the AWS console
-- chose a BTC API to get the current price of BTC (Coinbase)
-- installed aws-sam-cli (serverless application model cli tool)
-- created a new SAM project
-- updated the template.yaml file to create a new API Gateway endpoint, define a new DynamoDB table, and define a new Lambda function
-- created the actual lambda function to get the BTC price
-- build the application with SAM build
-- deployed the stack for the first time with SAM deploy --guided
-  - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/price  returns the current price of BTC
-- created lambda function to submit a guess
-- updated template.yaml to add a new API Gateway endpoint for the submit guess function and also return that as an output after successful deploy
-- build and deployed the stack
-  - curling POST with player id and guess https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/guess works correctly
+- Initialize codebase
+  - created folder structure and git repo
+- Configure AWS
+  - created a new IAM user and added it to the AWS console
+  - chose a BTC API to get the current price of BTC (Coinbase)
+  - installed aws-sam-cli (serverless application model cli tool)
+  - Created a new SAM project
+  - updated the template.yaml file to create a new API Gateway endpoint and define a new DynamoDB table
+- Implement Lambda functions
+  - Get BTC price Lambda function
+    - created the lambda function to get the BTC price
+    - build and deployed the app with SAM for the first time using SAM build and SAM deploy --guided
+    - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/price to make sure it returns the current price of BTC
+  - Submit guess Lambda function
+    - created the lambda function to submit a guess by passing player id and guess
+    - build and deployed the app with SAM
+    - curling POST with player id and guess https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/guess works correctly
+  - Get Status Lambda function
+    - created the lambda function to get the status of the user (active guesses and current score)
+    - build and deployed the app with SAM
+    - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/status to make sure it returns the current status of the game
+- Implement frontend
+  - created a new React and Typescript project with Vite
+  
