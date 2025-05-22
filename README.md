@@ -22,4 +22,4 @@
     - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/status to make sure it returns the current status of the game
 - Implement frontend
   - created a new React and Typescript project with Vite
-  
+  - installed additional helper libraries: Tanstack query and Tailwind CSS
