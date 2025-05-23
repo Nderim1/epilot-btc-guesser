@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowUpIcon, ArrowDownIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import TrendChart from './components/TrendChart';
 import Notification, { NotificationType } from './components/Notification';
@@ -33,9 +33,9 @@ const App = (): JSX.Element => {
   const [notification, setNotification] = useState<{ message: string; type: NotificationType } | null>(null);
 
   const { data: btcHistoricalPriceData, isLoading: btcHistoricalPriceLoading, error: btcHistoricalPriceError } = useGetBTCHistoricalPrice();
-  const { data: playerStatusData, isLoading: playerStatusLoading, error: _playerStatusError } = useGetPlayerStatus(debouncedQueryPlayerName);
+  const { data: playerStatusData, isLoading: playerStatusLoading, error: playerStatusError } = useGetPlayerStatus(debouncedQueryPlayerName);
   const guessMutation = useSetGuess();
-  const { data: btcPriceData, isLoading: btcPriceLoading, error: _btcPriceError } = useGetPrice();
+  const { data: btcPriceData, isLoading: btcPriceLoading, error: btcPriceError } = useGetPrice();
 
   console.log(playerStatusData)
 
@@ -110,6 +110,7 @@ const App = (): JSX.Element => {
       <h1 className='text-5xl font-bold text-center'>Bitcoin Price Guesser</h1>
       <div className='flex gap-2 items-center h-6'>
         <span>Current BTC price: </span>
+        {btcPriceError && <span className='text-red-500'>{btcPriceError.message}</span>}
         {btcPriceLoading ? (
           <ArrowPathIcon className='animate-spin h-5 w-5 text-gray-500' />
         ) : (
@@ -153,6 +154,7 @@ const App = (): JSX.Element => {
         </button>
       </div>
       <div className='flex gap-2 items-center'>
+        {playerStatusError && <span className='text-red-500'>{playerStatusError.message}</span>}
         {playerStatusLoading ? (
           <ArrowPathIcon className='animate-spin h-5 w-5 text-gray-500' />
         ) : (
