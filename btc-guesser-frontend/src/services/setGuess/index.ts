@@ -21,7 +21,7 @@ export const useSetGuess = () => {
     SetGuessPayload
   >({
     mutationFn: (payload: SetGuessPayload) =>
-      postFetcher(`https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/guess`, {
+      postFetcher(`${import.meta.env.VITE_API_BASE_URL}/guess`, {
         playerId: payload.playerId,
         guess: payload.guess
       }),
