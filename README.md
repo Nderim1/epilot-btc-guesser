@@ -140,7 +140,7 @@ The backend exposes the following API endpoints. Replace `<api-id>` and `<region
   - Get Status Lambda function
     - created the lambda function to get the status of the user (active guesses and current score)
     - build and deployed the app with SAM
-    - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/status to make sure it returns the current status of the game
+    - curling GET https://d1d64qf74g.execute-api.eu-west-1.amazonaws.com/Prod/player-status/{playerID} to make sure it returns the current status of the game
 - Implement frontend
   - created a new React and Typescript project with Vite
   - installed additional libraries: Tanstack query, chart.js, heroicons and Tailwind CSS
